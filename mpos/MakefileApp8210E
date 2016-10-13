@@ -1,0 +1,50 @@
+#file searching path
+
+CROSS_COMPILE=/usr/local/arm/4.4.3/bin/arm-linux-
+CC=$(CROSS_COMPILE)gcc
+LD=$(CROSS_COMPILE)ld
+AR=$(CROSS_COMPILE)ar
+RM=rm
+CP=cp
+
+#文件路径
+INCPATH =-I. \
+				 -I../sdk \
+				 -I../driver/04_printer \
+				 -I../driver/00_maxq \
+				 -I../driver/06_ui \
+				 -I../driver/08_net \
+				 -I../driver/10_serial \
+				 -I../driver/07_T9 \
+				 -I./main \
+				 -I./inc \
+				 -I../driver/04_printer \
+				 -I/usr/local/Trolltech/QtEmbedded-4.8.5-arm/mkspecs/qws/linux-arm-g++ \
+				 -I/usr/local/Trolltech/QtEmbedded-4.8.5-arm/include/QtCore \
+				 -I/usr/local/Trolltech/QtEmbedded-4.8.5-arm/include/QtNetwork \
+				 -I/usr/local/Trolltech/QtEmbedded-4.8.5-arm/include/QtGui \
+				 -I/usr/local/Trolltech/QtEmbedded-4.8.5-arm/include
+LIBPATH =-L./libe \
+				 -L/usr/local/Trolltech/qttslib/lib \
+				 -L/usr/local/Trolltech/QtEmbedded-4.8.5-arm/lib \
+				 -L/opt/qttslib/lib \
+				 -L/usr/local/Trolltech/QtEmbedded-4.8.5-arm/lib
+LDLIB   = $(LIBPATH) -lpthread -lgui -lztmisc  -lztserial  -lztnet -lprinter -lztsdk -ldl -lQtNetwork -lQtCore -lQtGui -lmaxq -lT9 
+CFLAGS+= -Wall -DNDEBUG -O2 $(INCPATH)
+
+# 生成的程序名
+NAME = mpos
+# 程序中用到的模块
+SRCS=$(wildcard  main/*.c )
+OBJS=$(patsubst %.c,%.o,$(SRCS))
+
+#包含依赖文件
+all: $(NAME)
+
+$(NAME):$(OBJS)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJS) $(LDLIB)
+
+.PHONY:clean
+clean:
+	-$(RM) $(OBJS)
+	-$(RM) $(NAME)
